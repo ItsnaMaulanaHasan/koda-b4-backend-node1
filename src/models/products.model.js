@@ -89,15 +89,24 @@ function addDataProduct(data) {
 }
 
 function updateProductById(id, body) {
-  products.forEach((product, i) => {
-    if (product.id == id) {
-      products[i] = { ...product, ...body };
-    }
-  });
+  const index = products.findIndex((p) => p.id == id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  products[index] = { ...products[index], ...body };
+  return products[index];
 }
 
 function deleteProductById(id) {
+  const data = products.find((product) => product.id === id);
+  if (!data) {
+    return false;
+  }
+
   products = products.filter((product) => product.id !== id);
+  return true;
 }
 
 module.exports = {
