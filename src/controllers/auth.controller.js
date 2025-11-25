@@ -1,10 +1,19 @@
-const authModel = require("../models/users.model");
+const userModel = require("../models/users.model");
 
 function login(req, res) {
   const { email, password } = req.body;
-  const data = authModel.getUserByEmail(email);
+  const data = userModel.getUserByEmail(email);
+  console.log(data);
 
-  if (!data || data.password !== password) {
+  if (!data) {
+    res.status(400).json({
+      success: false,
+      message: "Wrong email or password",
+    });
+    return;
+  }
+
+  if (email !== data.email && password !== password) {
     res.status(400).json({
       success: false,
       message: "Wrong email or password",
@@ -20,7 +29,7 @@ function login(req, res) {
 
 function register(req, res) {
   const data = req.body;
-  authModel.addUser(data);
+  userModel.addUser(data);
 
   res.json({
     success: true,
