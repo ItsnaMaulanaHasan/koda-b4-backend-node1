@@ -84,15 +84,14 @@ function getProductsById(id) {
 }
 
 function addDataProduct(data) {
-  data = { data, id: products.length + 1 };
+  data = { id: products.length + 1, ...data };
   products.push(data);
 }
 
 function updateProductById(id, body) {
-  const data = getProductsById(id);
-  products.forEach((product) => {
-    if (product == data) {
-      product = { ...product, body };
+  products.forEach((product, i) => {
+    if (product.id == id) {
+      products[i] = { ...product, ...body };
     }
   });
 }
