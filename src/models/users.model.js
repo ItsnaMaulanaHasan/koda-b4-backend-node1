@@ -38,8 +38,8 @@ let users = [
 ];
 
 function addUser(data) {
-  data.id = users.length + 1;
-  users = users.push(data);
+  data = { id: users.length + 1, ...data };
+  users.push(data);
 }
 
 function getUserByEmail(email) {
