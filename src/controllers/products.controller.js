@@ -4,23 +4,39 @@ const productsModel = require("../models/products.model");
  * GET /products
  * @summary Get list all of products
  * @tags products
- * @param {string} search.query   - search by name of product
- * @param {string} sortname.query - sort by name of product - enum:asc,desc
- * @param {string} sortprice.query - sort by price of product - enum: asc,desc
+ * @param  {string} search.query     - search by name of product
+ * @param  {string} sortname.query   - sort by name of product - enum:asc,desc
+ * @param  {string} sortprice.query  - sort by price of product - enum: asc,desc
+ * @param  {number} page.query       - page of list products
+ * @param  {number} limit.query      - limit of list products per page
  * @return {object} 200 - success get list all of products
  */
 function listProducts(req, res) {
   const { search = "", sortname = "", sortprice = "" } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 3;
+
+  const totalData = productsModel.getTotalDataProducts(search);
   const listProducts = productsModel.getListProducts(
     search,
     sortname,
-    sortprice
+    sortprice,
+    page,
+    limit
   );
 
   res.json({
     success: true,
     message: "Success get list products",
-    results: listProducts,
+    results: {
+      data: listProducts,
+      meta: {
+        page,
+        limit,
+        totalData: totalData,
+        totalPage: Math.ceil(totalData / limit),
+      },
+    },
   });
 }
 
