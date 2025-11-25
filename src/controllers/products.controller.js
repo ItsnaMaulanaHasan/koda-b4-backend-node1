@@ -1,4 +1,6 @@
 const productsModel = require("../models/products.model");
+const upload = require("../lib/upload");
+const multer = require("multer");
 
 /**
  * GET /products
@@ -111,6 +113,7 @@ function updateProduct(req, res) {
   res.json({
     success: true,
     message: "Product updated successfully",
+    result: updatedProduct,
   });
 }
 
@@ -140,10 +143,65 @@ function deleteProduct(req, res) {
   });
 }
 
+/**
+ * POST /products/{id}/image
+ * @summary Upload image product
+ * @tags    products
+ * @param   {number} id.path - id product
+ * @param   {file} fileImage.form - This is the file image of product - application/x-www-form-urlencoded
+ * @return  {object} 200 - product updated successfully
+ * @return  {object} 404 - product not found
+ */
+function uploadProductImage(req, res) {
+  const { id } = req.params;
+  upload.single("fileImage")(req, res, function (err) {
+    const product = productsModel.getProductsById(parseInt(id));
+    if (!product) {
+      res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+      return;
+    }
+
+    if (err instanceof multer.MulterError) {
+      res.json({
+        success: false,
+        message: err.message,
+      });
+      return;
+    } else if (err) {
+      res.json({
+        success: false,
+        message: err.message,
+      });
+      return;
+    }
+
+    if (!req.file) {
+      res.json({
+        success: false,
+        message: "File is required",
+      });
+      return;
+    }
+
+    const updatedProduct = productsModel.updateProductById(parseInt(id), {
+      image: req.file.filename,
+    });
+    res.json({
+      success: true,
+      message: "File uploaded successfully",
+      results: updatedProduct,
+    });
+  });
+}
+
 module.exports = {
   listProducts,
   detailProduct,
   addProduct,
   updateProduct,
   deleteProduct,
+  uploadProductImage,
 };
