@@ -71,28 +71,37 @@ let products = [
   },
 ];
 
-function getListProducts(search, sortname, sortprice) {
+function getTotalDataProducts(search) {
   const results = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (sortname && sortname === "asc") {
-    results.sort((a, b) => a.name.localeCompare(b.name));
-  }
+  return results.length;
+}
 
-  if (sortname && sortname === "desc") {
+function getListProducts(search, sortname, sortprice, page, limit) {
+  const results = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (sortname === "asc") {
+    results.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortname === "desc") {
     results.sort((a, b) => b.name.localeCompare(a.name));
   }
 
-  if (sortprice && sortprice === "asc") {
+  if (sortprice === "asc") {
     results.sort((a, b) => a.price - b.price);
-  }
-
-  if (sortprice && sortprice === "desc") {
+  } else if (sortprice === "desc") {
     results.sort((a, b) => b.price - a.price);
   }
 
-  return results;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const paginatedResults = results.slice(startIndex, endIndex);
+
+  return paginatedResults;
 }
 
 function getProductsById(id) {
@@ -126,6 +135,7 @@ function deleteProductById(id) {
 }
 
 module.exports = {
+  getTotalDataProducts,
   getListProducts,
   getProductsById,
   addDataProduct,
