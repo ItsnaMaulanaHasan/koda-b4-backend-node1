@@ -64,17 +64,26 @@ function addProduct(req, res) {
 }
 
 /**
- * PATCH /products
+ * PATCH /products/{id}
  * @summary Update product
  * @tags products
+ * @param {number} id.path - id product
  * @param {string} name.form - This is the name of product - application/x-www-form-urlencoded
- * @param {number} price.form - This is the price of product - application/x-www-form-urlencoded
+ * @param {number} price.form.optional - This is the price of product - application/x-www-form-urlencoded
  * @return {object} 200 - product updated successfully
  */
 function updateProduct(req, res) {
   const { id } = req.params;
   const data = req.body;
-  productsModel.updateProductById(parseInt(id), data);
+
+  const updatedProduct = productsModel.updateProductById(parseInt(id), data);
+
+  if (!updatedProduct) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
+  }
 
   res.json({
     success: true,
@@ -91,7 +100,15 @@ function updateProduct(req, res) {
  */
 function deleteProduct(req, res) {
   const { id } = req.params;
-  productsModel.deleteProductById(parseInt(id));
+  const isSuccess = productsModel.deleteProductById(parseInt(id));
+
+  if (!isSuccess) {
+    res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
+    return;
+  }
 
   res.json({
     success: true,
