@@ -1,5 +1,14 @@
 const userModel = require("../models/users.model");
 
+/**
+ * POST /auth/login
+ * @summary Login user
+ * @tags authentication
+ * @param  {string} email.form.required - Email of user - application/x-www-form-urlencoded
+ * @param  {string} password.form.required - Password of user - application/x-www-form-urlencoded
+ * @return {object} 200 - login success
+ * @return {object} 401 - wrong email or password
+ */
 function login(req, res) {
   const { email, password } = req.body;
   const data = userModel.getUserByEmail(email);
@@ -14,7 +23,7 @@ function login(req, res) {
   }
 
   if (email !== data.email && password !== password) {
-    res.status(400).json({
+    res.status(401).json({
       success: false,
       message: "Wrong email or password",
     });
@@ -27,6 +36,15 @@ function login(req, res) {
   });
 }
 
+/**
+ * POST /auth/register
+ * @summary Register user
+ * @tags authentication
+ * @param  {string} fullName.form.required - fullname of user - application/x-www-form-urlencoded
+ * @param  {string} email.form.required - Email of user - application/x-www-form-urlencoded
+ * @param  {string} password.form.required - Password of user - application/x-www-form-urlencoded
+ * @return {object} 200 - login success
+ */
 function register(req, res) {
   const data = req.body;
   userModel.addUser(data);
