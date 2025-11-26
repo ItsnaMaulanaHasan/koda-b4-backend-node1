@@ -37,16 +37,11 @@ let users = [
   },
 ];
 
-function addUser(data) {
+export function addUser(data) {
   data = { id: users.length + 1, ...data };
   users.push(data);
 }
 
-function getUserByEmail(email) {
+export function getUserByEmail(email) {
   return users.find((user) => user.email === email);
 }
-
-module.exports = {
-  addUser,
-  getUserByEmail,
-};

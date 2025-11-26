@@ -1,10 +1,10 @@
-const multer = require("multer");
-const path = require("node:path");
-const process = require("node:process");
+import multer, { diskStorage } from "multer";
+import { join } from "node:path";
+import { cwd } from "node:process";
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(process.cwd(), "uploads"));
+    cb(null, join(cwd(), "uploads"));
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now();
@@ -29,4 +29,4 @@ const upload = multer({
   limits: { fileSize: 1 * 1024 * 1024 },
 });
 
-module.exports = upload;
+export default upload;

@@ -1,7 +1,14 @@
-const productsModel = require("../models/products.model");
-const upload = require("../lib/upload");
-const multer = require("multer");
-const process = require("node:process");
+import { MulterError } from "multer";
+import { env } from "node:process";
+import upload from "../lib/upload.js";
+import {
+  addDataProduct,
+  deleteProductById,
+  getListProducts,
+  getProductsById,
+  getTotalDataProducts,
+  updateProductById,
+} from "../models/products.model.js";
 
 /**
  * GET /products
@@ -14,13 +21,13 @@ const process = require("node:process");
  * @param  {number} limit.query      - limit of list products per page
  * @return {object} 200 - success get list all of products
  */
-function listProducts(req, res) {
+export function listProducts(req, res) {
   const { search = "", sortname = "", sortprice = "" } = req.query;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 3;
 
-  const totalData = productsModel.getTotalDataProducts(search);
-  const listProducts = productsModel.getListProducts(
+  const totalData = getTotalDataProducts(search);
+  const listProducts = getListProducts(
     search,
     sortname,
     sortprice,
@@ -51,9 +58,9 @@ function listProducts(req, res) {
  * @return {object} 200 - success get detail of product
  * @return {object} 404 - product not found
  */
-function detailProduct(req, res) {
+export function detailProduct(req, res) {
   const { id } = req.params;
-  const product = productsModel.getProductsById(parseInt(id));
+  const product = getProductsById(parseInt(id));
 
   if (!product) {
     res.status(404).json({
@@ -78,9 +85,9 @@ function detailProduct(req, res) {
  * @param {number} price.form.required - This is the price of product - application/x-www-form-urlencoded
  * @return {object} 201 - product added successfully
  */
-function addProduct(req, res) {
+export function addProduct(req, res) {
   const data = req.body;
-  productsModel.addDataProduct(data);
+  addDataProduct(data);
 
   res.status(201).json({
     success: true,
@@ -98,11 +105,11 @@ function addProduct(req, res) {
  * @return {object} 200 - product updated successfully
  * @return {object} 404 - product not found
  */
-function updateProduct(req, res) {
+export function updateProduct(req, res) {
   const { id } = req.params;
   const data = req.body;
 
-  const updatedProduct = productsModel.updateProductById(parseInt(id), data);
+  const updatedProduct = updateProductById(parseInt(id), data);
 
   if (!updatedProduct) {
     return res.status(404).json({
@@ -126,9 +133,9 @@ function updateProduct(req, res) {
  * @return {object} 200 - product updated successfully
  * @return {object} 404 - product not found
  */
-function deleteProduct(req, res) {
+export function deleteProduct(req, res) {
   const { id } = req.params;
-  const isSuccess = productsModel.deleteProductById(parseInt(id));
+  const isSuccess = deleteProductById(parseInt(id));
 
   if (!isSuccess) {
     res.status(404).json({
@@ -153,10 +160,10 @@ function deleteProduct(req, res) {
  * @return  {object} 200 - product updated successfully
  * @return  {object} 404 - product not found
  */
-function uploadProductImage(req, res) {
+export function uploadProductImage(req, res) {
   const { id } = req.params;
   upload.single("fileImage")(req, res, function (err) {
-    const product = productsModel.getProductsById(parseInt(id));
+    const product = getProductsById(parseInt(id));
     if (!product) {
       res.status(404).json({
         success: false,
@@ -165,7 +172,7 @@ function uploadProductImage(req, res) {
       return;
     }
 
-    if (err instanceof multer.MulterError) {
+    if (err instanceof MulterError) {
       res.json({
         success: false,
         message: err.message,
@@ -187,8 +194,8 @@ function uploadProductImage(req, res) {
       return;
     }
 
-    const updatedProduct = productsModel.updateProductById(parseInt(id), {
-      image: process.env.BASE_UPLOAD_URL + req.file.filename,
+    const updatedProduct = updateProductById(parseInt(id), {
+      image: env.BASE_UPLOAD_URL + req.file.filename,
     });
     res.json({
       success: true,
@@ -197,12 +204,3 @@ function uploadProductImage(req, res) {
     });
   });
 }
-
-module.exports = {
-  listProducts,
-  detailProduct,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  uploadProductImage,
-};

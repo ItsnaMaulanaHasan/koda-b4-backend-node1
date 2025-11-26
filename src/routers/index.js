@@ -1,13 +1,13 @@
-const express = require("express");
-const authRouter = require("./auth.router");
-const productsRouter = require("./products.router");
-const path = require("node:path");
-const process = require("node:process");
+import express, { Router } from "express";
+import { join } from "node:path";
+import { cwd } from "node:process";
+import authRouter from "./auth.router.js";
+import productsRouter from "./products.router.js";
 
-const router = express.Router();
+const router = Router();
 
 router.use("/", authRouter);
 router.use("/", productsRouter);
-router.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+router.use("/uploads", express.static(join(cwd(), "uploads")));
 
-module.exports = router;
+export default router;

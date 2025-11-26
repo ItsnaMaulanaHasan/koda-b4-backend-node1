@@ -1,5 +1,5 @@
-const expressJSDocSwagger = require("express-jsdoc-swagger");
-const process = require("node:process");
+import expressJSDocSwagger from "express-jsdoc-swagger";
+import { cwd } from "node:process";
 
 function initDocs(app) {
   const options = {
@@ -7,11 +7,11 @@ function initDocs(app) {
       version: "1.8.0",
       title: "Backend API",
     },
-    baseDir: process.cwd(),
+    baseDir: cwd(),
     filesPattern: "./src/**/*.js",
   };
 
   expressJSDocSwagger(app)(options);
 }
 
-module.exports = initDocs;
+export default initDocs;

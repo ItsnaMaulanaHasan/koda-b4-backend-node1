@@ -85,7 +85,7 @@ let products = [
   },
 ];
 
-function getTotalDataProducts(search) {
+export function getTotalDataProducts(search) {
   const results = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -93,7 +93,7 @@ function getTotalDataProducts(search) {
   return results.length;
 }
 
-function getListProducts(search, sortname, sortprice, page, limit) {
+export function getListProducts(search, sortname, sortprice, page, limit) {
   const results = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -118,16 +118,16 @@ function getListProducts(search, sortname, sortprice, page, limit) {
   return paginatedResults;
 }
 
-function getProductsById(id) {
+export function getProductsById(id) {
   return products.find((product) => product.id === id);
 }
 
-function addDataProduct(data) {
+export function addDataProduct(data) {
   data = { id: products.length + 1, ...data };
   products.push(data);
 }
 
-function updateProductById(id, body) {
+export function updateProductById(id, body) {
   const index = products.findIndex((p) => p.id == id);
 
   if (index === -1) {
@@ -138,7 +138,7 @@ function updateProductById(id, body) {
   return products[index];
 }
 
-function deleteProductById(id) {
+export function deleteProductById(id) {
   const data = products.find((product) => product.id === id);
   if (!data) {
     return false;
@@ -147,12 +147,3 @@ function deleteProductById(id) {
   products = products.filter((product) => product.id !== id);
   return true;
 }
-
-module.exports = {
-  getTotalDataProducts,
-  getListProducts,
-  getProductsById,
-  addDataProduct,
-  updateProductById,
-  deleteProductById,
-};

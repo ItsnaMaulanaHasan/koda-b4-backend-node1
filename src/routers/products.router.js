@@ -1,13 +1,20 @@
-const express = require("express");
-const productsController = require("../controllers/products.controller");
+import express from "express";
+import {
+  addProduct,
+  deleteProduct,
+  detailProduct,
+  listProducts,
+  updateProduct,
+  uploadProductImage,
+} from "../controllers/products.controller.js";
 
 const router = express();
 
-router.get("/products", productsController.listProducts);
-router.get("/products/:id", productsController.detailProduct);
-router.post("/products", productsController.addProduct);
-router.patch("/products/:id", productsController.updateProduct);
-router.delete("/products/:id", productsController.deleteProduct);
-router.post("/products/:id/image", productsController.uploadProductImage);
+router.get("/products", listProducts);
+router.get("/products/:id", detailProduct);
+router.post("/products", addProduct);
+router.patch("/products/:id", updateProduct);
+router.delete("/products/:id", deleteProduct);
+router.post("/products/:id/image", uploadProductImage);
 
-module.exports = router;
+export default router;

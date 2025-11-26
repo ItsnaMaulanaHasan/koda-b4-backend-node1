@@ -1,14 +1,15 @@
-const express = require("express");
-const router = require("./src/routers");
-const initDocs = require("./src/lib/docs");
-require("dotenv").config();
+import dotenv from "dotenv";
+import express, { json, urlencoded } from "express";
+import initDocs from "./src/lib/docs.js";
+import router from "./src/routers/index.js";
+dotenv.config();
 
 const app = express();
 
 initDocs(app);
 
-app.use(express.urlencoded());
-app.use(express.json());
+app.use(urlencoded());
+app.use(json());
 
 app.use("/", router);
 
