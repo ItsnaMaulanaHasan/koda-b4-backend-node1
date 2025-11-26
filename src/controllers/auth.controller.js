@@ -1,4 +1,5 @@
-const userModel = require("../models/users.model");
+import { validationResult } from "express-validator";
+import { addUser, getUserByEmail } from "../models/users.model.js";
 
 /**
  * POST /auth/login
@@ -9,9 +10,18 @@ const userModel = require("../models/users.model");
  * @return {object} 200 - login success
  * @return {object} 401 - wrong email or password
  */
-function login(req, res) {
+export function login(req, res) {
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    res.json({
+      success: false,
+      message: "Error validation",
+      results: result.array(),
+    });
+    return;
+  }
   const { email, password } = req.body;
-  const data = userModel.getUserByEmail(email);
+  const data = getUserByEmail(email);
   console.log(data);
 
   if (!data) {
@@ -45,17 +55,12 @@ function login(req, res) {
  * @param  {string} password.form.required - Password of user - application/x-www-form-urlencoded
  * @return {object} 200 - login success
  */
-function register(req, res) {
+export function register(req, res) {
   const data = req.body;
-  userModel.addUser(data);
+  addUser(data);
 
   res.json({
     success: true,
     message: "Register success",
   });
 }
-
-module.exports = {
-  login,
-  register,
-};
